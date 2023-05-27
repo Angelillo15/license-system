@@ -40,14 +40,6 @@ tasks.named<Test>("test") {
 tasks.named<ShadowJar>("shadowJar") {
     archiveFileName.set("license-server.jar")
     archiveClassifier.set("")
-    try {
-        project.exec {
-            commandLine("pwd")
-            commandLine("yarn", "--cwd", "./frontend", "build")
-        }
-    } catch (e: Exception) {
-        println("Error building frontend")
-    }
 }
 
 allprojects {
@@ -80,4 +72,26 @@ allprojects {
     tasks.named<Test>("test") {
         useJUnitPlatform()
     }
+}
+
+tasks.register("buildFrontend") {
+    doLast {
+        project.exec {
+            commandLine("pwd")
+            commandLine("yarn", "--cwd", "./frontend", "build")
+        }
+    }
+}
+
+tasks.register("devFrontServer") {
+    doLast {
+        project.exec {
+            commandLine("pwd")
+            commandLine("yarn", "--cwd", "./frontend", "dev")
+        }
+    }
+}
+
+tasks.register("buildJar") {
+    dependsOn("buildFrontend", "shadowJar")
 }
