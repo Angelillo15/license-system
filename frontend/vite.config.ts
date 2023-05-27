@@ -11,5 +11,10 @@ export default defineConfig({
         changeOrigin: true,
       }
     }
-  }
+  },
+  build: {
+    outDir: '../server/src/main/resources/client',
+    assetsDir: './assets',
+  },
+  base: '/client/',
 })
