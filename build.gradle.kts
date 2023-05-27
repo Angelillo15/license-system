@@ -1,34 +1,83 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     application
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 repositories {
-    // Use Maven Central for resolving dependencies.
     mavenCentral()
+    maven("https://jitpack.io")
+    maven("https://plugins.gradle.org/m2/")
 }
 
 dependencies {
-    // Use JUnit Jupiter for testing.
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.1")
-
-    // This dependency is used by the application.
+    implementation(project(":server"))
     implementation("com.google.guava:guava:31.1-jre")
+    implementation("io.javalin:javalin:5.5.0")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.15.1")
+    implementation("org.slf4j:slf4j-simple:2.0.7")
+    implementation("org.projectlombok:lombok:1.18.28")
 }
 
-// Apply a specific Java toolchain to ease working on different environments.
 java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(11))
     }
 }
 
+
+
 application {
-    // Define the main class for the application.
-    mainClass.set("es.angelillo15.license.App")
+    mainClass.set("es.angelillo15.license.LicenseServer")
 }
 
 tasks.named<Test>("test") {
-    // Use JUnit Platform for unit tests.
     useJUnitPlatform()
 }
 
+tasks.named<ShadowJar>("shadowJar") {
+    archiveFileName.set("license-server.jar")
+    archiveClassifier.set("")
+    try {
+        project.exec {
+            commandLine("pwd")
+            commandLine("yarn", "--cwd", "./frontend", "build")
+        }
+    } catch (e: Exception) {
+        println("Error building frontend")
+    }
+}
+
+allprojects {
+    apply(plugin = "java")
+    apply(plugin = "com.github.johnrengelman.shadow")
+
+    repositories {
+        mavenCentral()
+        maven("https://jitpack.io")
+        maven("https://plugins.gradle.org/m2/")
+    }
+
+    dependencies {
+        testImplementation("org.junit.jupiter:junit-jupiter:5.9.1")
+        compileOnly("com.google.guava:guava:31.1-jre")
+        compileOnly("io.javalin:javalin:5.5.0")
+        compileOnly("com.fasterxml.jackson.core:jackson-databind:2.15.1")
+        compileOnly("org.slf4j:slf4j-simple:2.0.7")
+        compileOnly("org.projectlombok:lombok:1.18.28")
+        annotationProcessor("org.projectlombok:lombok:1.18.28")
+
+    }
+
+    java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(11))
+        }
+    }
+
+    tasks.named<Test>("test") {
+        useJUnitPlatform()
+    }
+}
