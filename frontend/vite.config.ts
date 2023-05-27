@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       '^/api/.*': {
-        target: loadEnv('', process.cwd()).VITE_API_URL,
+        target: loadEnv('', process.cwd()).VITE_DEV_BACKEND_URL,
         changeOrigin: true,
       }
     }
@@ -16,5 +16,5 @@ export default defineConfig({
     outDir: '../server/src/main/resources/client',
     assetsDir: './assets',
   },
-  base: '/client/',
+  base: '/',
 })

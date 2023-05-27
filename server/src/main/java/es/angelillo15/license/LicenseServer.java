@@ -25,7 +25,7 @@ public class LicenseServer {
             config.staticFiles.add(staticFileConfig -> {
                 staticFileConfig.location = Location.CLASSPATH;
                 staticFileConfig.directory = "/client";
-                staticFileConfig.hostedPath = "/client";
+                staticFileConfig.hostedPath = "/";
             });
         });
 
@@ -34,6 +34,10 @@ public class LicenseServer {
             logger.error("Unhandled exception", e);
             ctx.status(500);
         });
+
+        app.get("/api/license", (ctx -> {
+            ctx.json("Hello world");
+        }));
 
         app.start(5000);
 
